@@ -127,6 +127,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ? const ParcelCategoryScreen()
             : SafeArea(
                 child: UpgradeAlert(
+
+                  upgrader: Upgrader(
+                    durationUntilAlertAgain: const Duration(hours: 24),
+                    dialogStyle: UpgradeDialogStyle.cupertino,
+                    showIgnore: false,
+
+                  ),
                   child: RefreshIndicator(
                     onRefresh: () async {
                       if (Get.find<SplashController>().module != null) {
