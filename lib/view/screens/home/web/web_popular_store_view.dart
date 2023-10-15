@@ -93,7 +93,7 @@ class WebPopularStoreView extends StatelessWidget {
                       child: CustomImage(
                         image: '${Get.find<SplashController>().configModel!.baseUrls!.storeCoverPhotoUrl}'
                             '/${storeList[index].coverPhoto}',
-                        height: 120, width: 500, fit: BoxFit.cover,
+                        height: 210, width: 500, fit: BoxFit.cover,
                       ),
                     ),
                     DiscountTag(
@@ -195,7 +195,7 @@ class PopularStoreShimmer extends StatelessWidget {
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
               Container(
-                height: 120, width: 500,
+                height: 210, width: 500,
                 decoration: BoxDecoration(
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(Dimensions.radiusSmall)),
                     color: Colors.grey[300]

@@ -19,7 +19,7 @@ class CursorTimeoutController extends GetxController {
   void startTimer() {
     _cursorTimer?.cancel();
     _cursorTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (timer.tick >= 60 && GetPlatform.isWeb) {
+      if (timer.tick >= 120 && GetPlatform.isWeb) {
         _showPopup.value = true;
         Get.dialog(WillPopScope(
           onWillPop: () async => false,
@@ -34,25 +34,26 @@ class CursorTimeoutController extends GetxController {
             // ),
             title: Text(
               'refresh_popup_1'.tr,
-              style: TextStyle(color: Colors.green),
+              style: const TextStyle(color: Colors.green),
             ),
             content: Text(
               'refresh_popup_2'.tr,
               textAlign: TextAlign.center,
-
             ),
             actions: [
               Padding(
-                padding: const EdgeInsets.only( bottom: 10),
+                padding: const EdgeInsets.only(bottom: 10),
                 child: ElevatedButton(
                     onPressed: () {
                       Get.back();
                     },
-                    child: Text('close'.tr, style: TextStyle(color: Colors.blue),),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[100],
-                  )
-                ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue[100],
+                    ),
+                    child: Text(
+                      'close'.tr,
+                      style: const TextStyle(color: Colors.blue),
+                    )),
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 15, bottom: 10),
@@ -65,7 +66,6 @@ class CursorTimeoutController extends GetxController {
                     },
                     child: Text('refresh'.tr)),
               ),
-
             ],
           ),
         ));

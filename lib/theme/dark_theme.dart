@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 
 ThemeData dark({Color color = const Color(0xFF54b46b)}) => ThemeData(
   fontFamily: 'Roboto',
+
+  scrollbarTheme: const ScrollbarThemeData(
+    thumbVisibility: MaterialStatePropertyAll<bool>(true),
+    thumbColor: MaterialStatePropertyAll(Color(0xFF808080)),
+    // trackColor: MaterialStatePropertyAll(Color(0xFFD3D3D3)),
+  ),
   primaryColor: color,
   secondaryHeaderColor: const Color(0xFF009f67),
   disabledColor: const Color(0xffa2a7ad),

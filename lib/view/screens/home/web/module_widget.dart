@@ -12,51 +12,81 @@ class ModuleWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<SplashController>(builder: (splashController) {
-      return (ResponsiveHelper.isDesktop(context) && splashController.configModel!.module == null && splashController.moduleList != null
-      && splashController.moduleList!.length > 1) ? Container(
-        width: 70,
+      return (ResponsiveHelper.isDesktop(context) &&
+          splashController.configModel!.module == null &&
+          splashController.moduleList != null
+          && splashController.moduleList!.length > 1) ? Container(
+        width: Get.width,
+        height: 60,
         decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: const BorderRadius.horizontal(left: Radius.circular(Dimensions.radiusDefault)),
-          boxShadow: [BoxShadow(color: Colors.grey[Get.isDarkMode ? 700 : 200]!, spreadRadius: 0.5, blurRadius: 5)],
+          color: Theme
+              .of(context)
+              .cardColor,
+          borderRadius: const BorderRadius.horizontal(
+              left: Radius.circular(Dimensions.radiusDefault)),
+          // boxShadow: [BoxShadow(color: Colors.grey[Get.isDarkMode ? 700 : 200]!, spreadRadius: 0.5, blurRadius: 5)],
         ),
-        child: SingleChildScrollView(
-          controller: ScrollController(),
-          child: ListView.builder(
-            shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
+        child: Center(
+          child: ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
             itemCount: splashController.moduleList!.length,
             padding: const EdgeInsets.only(top: Dimensions.paddingSizeSmall),
+            scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {
               return Padding(
-                padding: const EdgeInsets.only(bottom: Dimensions.paddingSizeSmall),
-                child: Tooltip(
-                  message: splashController.moduleList![index].moduleName,
-                  padding: const EdgeInsets.all(Dimensions.paddingSizeExtraSmall),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    borderRadius: const BorderRadius.all(Radius.circular(Dimensions.radiusSmall)),
-                  ),
-                  textStyle: robotoRegular.copyWith(color: Colors.white, fontSize: Dimensions.fontSizeSmall),
-                  preferBelow: false,
-                  verticalOffset: 20,
-                  child: InkWell(
-                    onTap: () => splashController.switchModule(index, false),
-                    child: CircleAvatar(
-                      radius: 25,
-                      backgroundColor: Theme.of(context).primaryColor.withAlpha((splashController.module != null
-                          && splashController.moduleList![index].id == splashController.module!.id) ? Get.isDarkMode ? 100 : 70 : Get.isDarkMode ? 70 : 20),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
-                        child: CustomImage(
-                          image: '${splashController.configModel!.baseUrls!.moduleImageUrl}/${splashController.moduleList![index].icon}',
-                          height: 30, width: 30,
-                        ),
+                padding: const EdgeInsets.only(
+                    bottom: Dimensions.paddingSizeSmall),
+                child: InkWell(
+                  onTap: () => splashController.switchModule(index, false),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme
+                          .of(context)
+                          .primaryColor
+                          .withAlpha((splashController.module != null
+                          && splashController.moduleList![index].id ==
+                              splashController.module!.id) ? Get.isDarkMode
+                          ? 250
+                          : 250 : Get.isDarkMode ? 0 : 0),
+                      borderRadius: const BorderRadius.all(Radius.circular(60)),
+                      // border: Border.all(color: Theme.of(context).primaryColor)
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16, right: 16, top: 8, bottom: 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(splashController.moduleList![index].moduleName!,
+                            style: robotoMedium.copyWith(
+                              fontSize: Dimensions.fontSizeSmall,
+                              color: splashController.module != null
+                                  && splashController.moduleList![index].id ==
+                                      splashController.module!.id ? Colors.white : Get.isDarkMode ? Colors.white : Colors.black,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,),
+                          const SizedBox(width: 2),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                                Dimensions.radiusSmall),
+                            child: CustomImage(
+                              image: '${splashController.configModel!.baseUrls!
+                                  .moduleImageUrl}/${splashController
+                                  .moduleList![index].icon}',
+                              height: 40, width: 40,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
               );
             },
+            separatorBuilder: (context, index) =>
+            const SizedBox(width: Dimensions.paddingSizeSmall),
           ),
         ),
       ) : const SizedBox();

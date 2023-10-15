@@ -50,200 +50,207 @@ class _RiderHomeScreenState extends State<RiderHomeScreen> {
     return Scaffold(
       appBar: const RiderAppBar(),
       body: GetBuilder<LocationController>(builder: (locationController) {
-        return Stack(clipBehavior: Clip.none, children: [
+        return SingleChildScrollView(
 
-          RefreshIndicator(
-            onRefresh: ()async {
-              await Get.find<BannerController>().getTaxiBannerList(false);
-              await Get.find<RiderController>().getTopRatedVehiclesList(1, isUpdate: true);
-            },
-            child: SingleChildScrollView(
-              padding: ResponsiveHelper.isDesktop(context) ? null : const EdgeInsets.all(Dimensions.paddingSizeSmall),
-              child: FooterView(child: SizedBox(width: Dimensions.webMaxWidth, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          child: Column(
+            children: [
+              ResponsiveHelper.isDesktop(context) ? const Center(child: ModuleWidget()) : const SizedBox(),
 
-                const TaxiBannerView(),
-                const SizedBox(height: Dimensions.paddingSizeSmall),
+              Stack(clipBehavior: Clip.none, children: [
 
-                Container(
-                  height: 50, width: Dimensions.webMaxWidth,
-                  color: Theme.of(context).colorScheme.background,
-                  child: InkWell(
-                    onTap: () => Get.toNamed(RouteHelper.getSelectRideMapLocationRoute("initial", null, null)),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
-                        border: Border.all(color: Theme.of(context).primaryColor.withOpacity(.5)),
-                        borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
-                      ),
-                      child: Row(children: [
-                        Image.asset(Images.riderSearch,scale: 3,),
-                        const SizedBox(width: Dimensions.paddingSizeExtraSmall),
-                        Expanded(child: Text(
-                          'where_to_go'.tr,
-                          style: robotoRegular.copyWith(
-                            fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).hintColor,
+                RefreshIndicator(
+                  onRefresh: ()async {
+                    await Get.find<BannerController>().getTaxiBannerList(false);
+                    await Get.find<RiderController>().getTopRatedVehiclesList(1, isUpdate: true);
+                  },
+                  child: SingleChildScrollView(
+                    padding: ResponsiveHelper.isDesktop(context) ? null : const EdgeInsets.all(Dimensions.paddingSizeSmall),
+                    child: FooterView(child: SizedBox(width: Dimensions.webMaxWidth, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+
+                      const TaxiBannerView(),
+                      const SizedBox(height: Dimensions.paddingSizeSmall),
+
+                      Container(
+                        height: 50, width: Dimensions.webMaxWidth,
+                        color: Theme.of(context).colorScheme.background,
+                        child: InkWell(
+                          onTap: () => Get.toNamed(RouteHelper.getSelectRideMapLocationRoute("initial", null, null)),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeSmall),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).cardColor,
+                              border: Border.all(color: Theme.of(context).primaryColor.withOpacity(.5)),
+                              borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
+                            ),
+                            child: Row(children: [
+                              Image.asset(Images.riderSearch,scale: 3,),
+                              const SizedBox(width: Dimensions.paddingSizeExtraSmall),
+                              Expanded(child: Text(
+                                'where_to_go'.tr,
+                                style: robotoRegular.copyWith(
+                                  fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).hintColor,
+                                ),
+                              )),
+                            ]),
                           ),
-                        )),
-                      ]),
-                    ),
+                        ),
+                      ),
+                      const SizedBox(height: Dimensions.paddingSizeDefault),
+
+                      _isLoggedIn && locationController.addressList!.isEmpty ? const AddAddressWidget() : const SizedBox(),
+
+                      _isLoggedIn ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text('saved_address'.tr, style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeDefault)),
+                        const SizedBox(height: Dimensions.paddingSizeDefault),
+
+                        locationController.addressList != null && locationController.addressList!.isNotEmpty ? GridView.builder(
+                          controller: ScrollController(),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: ResponsiveHelper.isDesktop(context) ? 3 : ResponsiveHelper.isTab(context) ? 2 : 1,
+                            childAspectRatio: ResponsiveHelper.isDesktop(context) ? (1/0.25) : (1/0.205),
+                            crossAxisSpacing: Dimensions.paddingSizeSmall, mainAxisSpacing: Dimensions.paddingSizeSmall,
+                          ),
+                          itemCount: locationController.addressList!.length > 3 ? 3 : locationController.addressList!.length,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              onTap: (){
+                                Get.toNamed(RouteHelper.getSelectRideMapLocationRoute("initial", locationController.addressList![index], null));
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).cardColor,
+                                  borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
+                                ),
+                                child: Row(children: [
+
+                                  Container(
+                                    height: 33, width: 32, alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.all(Radius.circular(Dimensions.radiusSmall)),
+                                        color: Theme.of(context).primaryColor.withOpacity(0.1), shape: BoxShape.rectangle),
+                                    child: Image.asset(
+                                      locationController.addressList![index].addressType == 'others' ? Images.addressJourney :
+                                      locationController.addressList![index].addressType == 'home' ? Images.addressHome:
+                                      Images.addressOffice,
+                                      height: 13,
+                                    ),
+                                  ),
+                                  const SizedBox(width: Dimensions.paddingSizeSmall),
+
+                                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [
+                                    Text(locationController.addressList![index].addressType!, style: robotoMedium),
+                                    const SizedBox(height: Dimensions.paddingSizeExtraSmall),
+                                    Text(
+                                      locationController.addressList![index].address!, maxLines: 2, overflow: TextOverflow.ellipsis,
+                                      style: robotoRegular.copyWith(
+                                          color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(.5),
+                                          fontSize: Dimensions.fontSizeSmall),
+                                    ),
+                                  ])),
+                                  const SizedBox(width: Dimensions.paddingSizeSmall),
+
+                                  Icon(
+                                    Icons.arrow_forward,
+                                    color: Theme.of(context).primaryColor,
+                                    size: 16,
+                                  ),
+
+                                ]),
+                              ),
+                            );
+                          },
+                        ) : const SizedBox(),
+                        const SizedBox(height: Dimensions.paddingSizeLarge),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('trip_history'.tr, style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeDefault)),
+                            InkWell(
+                              onTap: (){},
+                              child: Text('view_all'.tr, style: robotoBold.copyWith(
+                                color: Theme.of(context).primaryColor,
+                                decoration: TextDecoration.underline,
+                              )),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: Dimensions.paddingSizeDefault),
+
+                        ///Trip history..
+                        GridView.builder(
+                          controller: ScrollController(),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: ResponsiveHelper.isDesktop(context) ? 3 : ResponsiveHelper.isTab(context) ? 2 : 1,
+                            childAspectRatio: ResponsiveHelper.isDesktop(context) ? (1/0.25) : (1/0.205),
+                            crossAxisSpacing: Dimensions.paddingSizeSmall, mainAxisSpacing: Dimensions.paddingSizeSmall,
+                          ),
+                          itemCount: 3,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              onTap: (){},
+                              child: Container(
+                                padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).cardColor,
+                                  borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
+                                ),
+                                child: Row(children: [
+
+                                  Container(
+                                    height: 55, width: 55, alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.all(Radius.circular(Dimensions.radiusSmall)),
+                                        color: Theme.of(context).primaryColor.withOpacity(0.1), shape: BoxShape.rectangle),
+                                    child: const CustomImage(
+                                      image:  '',
+                                      height: 30, width: 30,
+                                    ),
+                                  ),
+                                  const SizedBox(width: Dimensions.paddingSizeSmall),
+
+                                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [
+                                    Text('Dhanmondi to Mirpur DOHS ', style: robotoMedium),
+                                    const SizedBox(height: Dimensions.paddingSizeExtraSmall),
+                                    Text(
+                                      '\$144', maxLines: 2, overflow: TextOverflow.ellipsis,
+                                      style: robotoRegular.copyWith(
+                                          color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(.5),
+                                          fontSize: Dimensions.fontSizeSmall),
+                                    ),
+                                  ])),
+                                  const SizedBox(width: Dimensions.paddingSizeSmall),
+
+                                  Text('16th \n August',style: robotoRegular,),
+
+                                ]),
+                              ),
+                            );
+                          },
+                        ),
+
+                      ]) : const SizedBox(),
+
+
+                      const TopRatedCars(),
+                      const SizedBox(height: Dimensions.paddingSizeDefault),
+
+                      const UseCouponSection(),
+                      const SizedBox(height: Dimensions.paddingSizeExtraLarge),
+
+                    ]))),
                   ),
                 ),
-                const SizedBox(height: Dimensions.paddingSizeDefault),
 
-                _isLoggedIn && locationController.addressList!.isEmpty ? const AddAddressWidget() : const SizedBox(),
-
-                _isLoggedIn ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('saved_address'.tr, style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeDefault)),
-                  const SizedBox(height: Dimensions.paddingSizeDefault),
-
-                  locationController.addressList != null && locationController.addressList!.isNotEmpty ? GridView.builder(
-                    controller: ScrollController(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: ResponsiveHelper.isDesktop(context) ? 3 : ResponsiveHelper.isTab(context) ? 2 : 1,
-                      childAspectRatio: ResponsiveHelper.isDesktop(context) ? (1/0.25) : (1/0.205),
-                      crossAxisSpacing: Dimensions.paddingSizeSmall, mainAxisSpacing: Dimensions.paddingSizeSmall,
-                    ),
-                    itemCount: locationController.addressList!.length > 3 ? 3 : locationController.addressList!.length,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: (){
-                          Get.toNamed(RouteHelper.getSelectRideMapLocationRoute("initial", locationController.addressList![index], null));
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).cardColor,
-                            borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
-                          ),
-                          child: Row(children: [
-
-                            Container(
-                              height: 33, width: 32, alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(Radius.circular(Dimensions.radiusSmall)),
-                                  color: Theme.of(context).primaryColor.withOpacity(0.1), shape: BoxShape.rectangle),
-                              child: Image.asset(
-                                locationController.addressList![index].addressType == 'others' ? Images.addressJourney :
-                                locationController.addressList![index].addressType == 'home' ? Images.addressHome:
-                                Images.addressOffice,
-                                height: 13,
-                              ),
-                            ),
-                            const SizedBox(width: Dimensions.paddingSizeSmall),
-
-                            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [
-                              Text(locationController.addressList![index].addressType!, style: robotoMedium),
-                              const SizedBox(height: Dimensions.paddingSizeExtraSmall),
-                              Text(
-                                locationController.addressList![index].address!, maxLines: 2, overflow: TextOverflow.ellipsis,
-                                style: robotoRegular.copyWith(
-                                    color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(.5),
-                                    fontSize: Dimensions.fontSizeSmall),
-                              ),
-                            ])),
-                            const SizedBox(width: Dimensions.paddingSizeSmall),
-
-                            Icon(
-                              Icons.arrow_forward,
-                              color: Theme.of(context).primaryColor,
-                              size: 16,
-                            ),
-
-                          ]),
-                        ),
-                      );
-                    },
-                  ) : const SizedBox(),
-                  const SizedBox(height: Dimensions.paddingSizeLarge),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('trip_history'.tr, style: robotoMedium.copyWith(fontSize: Dimensions.fontSizeDefault)),
-                      InkWell(
-                        onTap: (){},
-                        child: Text('view_all'.tr, style: robotoBold.copyWith(
-                          color: Theme.of(context).primaryColor,
-                          decoration: TextDecoration.underline,
-                        )),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: Dimensions.paddingSizeDefault),
-
-                  ///Trip history..
-                  GridView.builder(
-                    controller: ScrollController(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: ResponsiveHelper.isDesktop(context) ? 3 : ResponsiveHelper.isTab(context) ? 2 : 1,
-                      childAspectRatio: ResponsiveHelper.isDesktop(context) ? (1/0.25) : (1/0.205),
-                      crossAxisSpacing: Dimensions.paddingSizeSmall, mainAxisSpacing: Dimensions.paddingSizeSmall,
-                    ),
-                    itemCount: 3,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: (){},
-                        child: Container(
-                          padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).cardColor,
-                            borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
-                          ),
-                          child: Row(children: [
-
-                            Container(
-                              height: 55, width: 55, alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(Radius.circular(Dimensions.radiusSmall)),
-                                  color: Theme.of(context).primaryColor.withOpacity(0.1), shape: BoxShape.rectangle),
-                              child: const CustomImage(
-                                image:  '',
-                                height: 30, width: 30,
-                              ),
-                            ),
-                            const SizedBox(width: Dimensions.paddingSizeSmall),
-
-                            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [
-                              Text('Dhanmondi to Mirpur DOHS ', style: robotoMedium),
-                              const SizedBox(height: Dimensions.paddingSizeExtraSmall),
-                              Text(
-                                '\$144', maxLines: 2, overflow: TextOverflow.ellipsis,
-                                style: robotoRegular.copyWith(
-                                    color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(.5),
-                                    fontSize: Dimensions.fontSizeSmall),
-                              ),
-                            ])),
-                            const SizedBox(width: Dimensions.paddingSizeSmall),
-
-                            Text('16th \n August',style: robotoRegular,),
-
-                          ]),
-                        ),
-                      );
-                    },
-                  ),
-
-                ]) : const SizedBox(),
-
-
-                const TopRatedCars(),
-                const SizedBox(height: Dimensions.paddingSizeDefault),
-
-                const UseCouponSection(),
-                const SizedBox(height: Dimensions.paddingSizeExtraLarge),
-
-              ]))),
-            ),
+              ]),
+            ],
           ),
-
-          ResponsiveHelper.isDesktop(context) ? const Positioned(top: 150, right: 0, child: ModuleWidget()) : const SizedBox(),
-
-        ]);
+        );
       }),
     );
   }

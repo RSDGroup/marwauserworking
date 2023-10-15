@@ -22,7 +22,7 @@ class WebMenuBar extends StatefulWidget implements PreferredSizeWidget {
   State<WebMenuBar> createState() => _WebMenuBarState();
 
   @override
-  Size get preferredSize => const Size(Dimensions.webMaxWidth, 70);
+  Size get preferredSize =>  Size(Dimensions.webMaxWidth, 70);
 }
 
 class _WebMenuBarState extends State<WebMenuBar> {

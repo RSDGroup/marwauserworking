@@ -96,7 +96,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-
   @override
   void dispose() {
     super.dispose();
@@ -127,12 +126,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ? const ParcelCategoryScreen()
             : SafeArea(
                 child: UpgradeAlert(
-
                   upgrader: Upgrader(
                     durationUntilAlertAgain: const Duration(hours: 24),
                     dialogStyle: UpgradeDialogStyle.cupertino,
                     showIgnore: false,
-
                   ),
                   child: RefreshIndicator(
                     onRefresh: () async {
@@ -163,7 +160,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (Get.find<AuthController>().isLoggedIn()) {
                           await Get.find<LocationController>().getAddressList();
                         }
-                        await Get.find<StoreController>().getFeaturedStoreList();
+                        await Get.find<StoreController>()
+                            .getFeaturedStoreList();
                       }
                     },
                     child: ResponsiveHelper.isDesktop(context)
@@ -171,7 +169,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             scrollController: _scrollController,
                           )
                         : (Get.find<SplashController>().module != null &&
-                                Get.find<SplashController>().module!.themeId == 2)
+                                Get.find<SplashController>().module!.themeId ==
+                                    2)
                             ? Theme1HomeScreen(
                                 scrollController: _scrollController,
                                 splashController: splashController,
@@ -220,16 +219,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                         SizedBox(
                                             width: (splashController.module !=
                                                         null &&
-                                                    splashController.configModel!
+                                                    splashController
+                                                            .configModel!
                                                             .module ==
                                                         null)
-                                                ? Dimensions.paddingSizeExtraSmall
+                                                ? Dimensions
+                                                    .paddingSizeExtraSmall
                                                 : 0),
                                         Expanded(
                                             child: InkWell(
-                                          onTap: () => Get.toNamed(
-                                              RouteHelper.getAccessLocationRoute(
-                                                  'home')),
+                                          onTap: () => Get.toNamed(RouteHelper
+                                              .getAccessLocationRoute('home')),
                                           child: Padding(
                                             padding: EdgeInsets.symmetric(
                                               vertical:
@@ -239,8 +239,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ? Dimensions.paddingSizeSmall
                                                   : 0,
                                             ),
-                                            child: GetBuilder<LocationController>(
-                                                builder: (locationController) {
+                                            child:
+                                                GetBuilder<LocationController>(
+                                                    builder:
+                                                        (locationController) {
                                               return Row(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.center,
@@ -271,8 +273,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       locationController
                                                           .getUserAddress()!
                                                           .address!,
-                                                      style:
-                                                          robotoRegular.copyWith(
+                                                      style: robotoRegular
+                                                          .copyWith(
                                                         color: Theme.of(context)
                                                             .textTheme
                                                             .bodyLarge!
@@ -296,10 +298,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                         )),
                                         InkWell(
-                                          child:
-                                              GetBuilder<NotificationController>(
-                                                  builder:
-                                                      (notificationController) {
+                                          child: GetBuilder<
+                                                  NotificationController>(
+                                              builder:
+                                                  (notificationController) {
                                             return Stack(children: [
                                               Icon(Icons.notifications,
                                                   size: 25,
@@ -315,10 +317,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       child: Container(
                                                         height: 10,
                                                         width: 10,
-                                                        decoration: BoxDecoration(
-                                                          color: Theme.of(context)
-                                                              .primaryColor,
-                                                          shape: BoxShape.circle,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .primaryColor,
+                                                          shape:
+                                                              BoxShape.circle,
                                                           border: Border.all(
                                                               width: 1,
                                                               color: Theme.of(
@@ -329,8 +334,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   : const SizedBox(),
                                             ]);
                                           }),
-                                          onTap: () => Get.toNamed(
-                                              RouteHelper.getNotificationRoute()),
+                                          onTap: () => Get.toNamed(RouteHelper
+                                              .getNotificationRoute()),
                                         ),
                                       ]),
                                     )),
@@ -350,8 +355,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 .colorScheme
                                                 .background,
                                             padding: const EdgeInsets.symmetric(
-                                                horizontal:
-                                                    Dimensions.paddingSizeSmall),
+                                                horizontal: Dimensions
+                                                    .paddingSizeSmall),
                                             child: InkWell(
                                               onTap: () => Get.toNamed(
                                                   RouteHelper.getSearchRoute()),
@@ -361,11 +366,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         horizontal: Dimensions
                                                             .paddingSizeSmall),
                                                 decoration: BoxDecoration(
-                                                  color:
-                                                      Theme.of(context).cardColor,
+                                                  color: Theme.of(context)
+                                                      .cardColor,
                                                   borderRadius:
                                                       BorderRadius.circular(
-                                                          Dimensions.radiusSmall),
+                                                          Dimensions
+                                                              .radiusSmall),
                                                   boxShadow: [
                                                     BoxShadow(
                                                         color: Colors.grey[
@@ -397,7 +403,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                             .tr
                                                         : 'search_item_or_store'
                                                             .tr,
-                                                    style: robotoRegular.copyWith(
+                                                    style:
+                                                        robotoRegular.copyWith(
                                                       fontSize: Dimensions
                                                           .fontSizeSmall,
                                                       color: Theme.of(context)
@@ -435,9 +442,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   // const PopularItemView(
                                                   //     isPopular: false),
                                                   Padding(
-                                                    padding:
-                                                        const EdgeInsets.fromLTRB(
-                                                            10, 15, 0, 5),
+                                                    padding: const EdgeInsets
+                                                        .fromLTRB(10, 15, 0, 5),
                                                     child: Row(children: [
                                                       Expanded(
                                                           child: Text(
@@ -446,7 +452,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 .moduleConfig!
                                                                 .module!
                                                                 .showRestaurantText!
-                                                            ? 'all_restaurants'.tr
+                                                            ? 'all_restaurants'
+                                                                .tr
                                                             : 'all_stores'.tr,
                                                         style: robotoMedium.copyWith(
                                                             fontSize: Dimensions
@@ -456,7 +463,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     ]),
                                                   ),
                                                   GetBuilder<StoreController>(
-                                                      builder: (storeController) {
+                                                      builder:
+                                                          (storeController) {
                                                     return PaginatedListView(
                                                       scrollController:
                                                           _scrollController,
@@ -471,13 +479,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                   .storeModel !=
                                                               null
                                                           ? storeController
-                                                              .storeModel!.offset
+                                                              .storeModel!
+                                                              .offset
                                                           : null,
                                                       onPaginate: (int?
                                                               offset) async =>
                                                           await storeController
                                                               .getStoreList(
-                                                                  offset!, false),
+                                                                  offset!,
+                                                                  false),
                                                       itemView: ItemsView(
                                                         isStore: true,
                                                         items: null,
@@ -488,8 +498,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 .storeModel!
                                                                 .stores
                                                             : null,
-                                                        padding:
-                                                            EdgeInsets.symmetric(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
                                                           horizontal: ResponsiveHelper
                                                                   .isDesktop(
                                                                       context)
@@ -509,7 +519,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   }),
                                                 ])
                                           : ModuleView(
-                                              splashController: splashController),
+                                              splashController:
+                                                  splashController),
                                     )),
                                   ),
                                 ],

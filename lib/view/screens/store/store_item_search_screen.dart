@@ -33,7 +33,7 @@ class _StoreItemSearchScreenState extends State<StoreItemSearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size(Dimensions.webMaxWidth, 60),
+        preferredSize:  Size(Dimensions.webMaxWidth, 60),
         child: Container(
           height: 60 + context.mediaQueryPadding.top, width: Dimensions.webMaxWidth,
           padding: EdgeInsets.only(top: context.mediaQueryPadding.top),

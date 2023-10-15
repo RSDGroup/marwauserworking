@@ -23,101 +23,207 @@ class ParcelCategoryScreen extends StatefulWidget {
 }
 
 class _ParcelCategoryScreenState extends State<ParcelCategoryScreen> {
-
   @override
   void initState() {
     super.initState();
 
-    if(Get.find<AuthController>().isLoggedIn() && Get.find<UserController>().userInfoModel == null) {
+    if (Get.find<AuthController>().isLoggedIn() &&
+        Get.find<UserController>().userInfoModel == null) {
       Get.find<UserController>().getUserInfo();
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ResponsiveHelper.isDesktop(context) ? null : CustomAppBar(
-        title: 'parcel'.tr, leadingIcon: Images.moduleIcon,
+      appBar: ResponsiveHelper.isDesktop(context)
+          ? null
+          : CustomAppBar(
+        title: 'parcel'.tr,
+        leadingIcon: Images.moduleIcon,
         onBackPressed: () => Get.find<SplashController>().setModule(null),
       ),
       body: GetBuilder<ParcelController>(builder: (parcelController) {
-        return Stack(clipBehavior: Clip.none, children: [
-
-          SingleChildScrollView(
-            padding: ResponsiveHelper.isDesktop(context) ? null : const EdgeInsets.all(Dimensions.paddingSizeSmall),
-            child: FooterView(child: SizedBox(width: Dimensions.webMaxWidth, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-
-              Center(child: Image.asset(Images.parcel, height: 200)),
-              const SizedBox(height: Dimensions.paddingSizeSmall),
-
-              Center(child: Text('instant_same_day_delivery'.tr, style: robotoMedium)),
-              Center(child: Text(
-                'send_things_to_your_destination_instantly_and_safely'.tr,
-                style: robotoRegular, textAlign: TextAlign.center,
-              )),
-              const SizedBox(height: Dimensions.paddingSizeLarge),
-
-              Text('what_are_you_sending'.tr, style: robotoBold.copyWith(fontSize: Dimensions.fontSizeLarge)),
-              const SizedBox(height: Dimensions.paddingSizeExtraSmall),
-
-              parcelController.parcelCategoryList != null ? parcelController.parcelCategoryList!.isNotEmpty ? GridView.builder(
-                controller: ScrollController(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: ResponsiveHelper.isDesktop(context) ? 3 : ResponsiveHelper.isTab(context) ? 2 : 1,
-                  childAspectRatio: ResponsiveHelper.isDesktop(context) ? (1/0.25) : (1/0.205),
-                  crossAxisSpacing: Dimensions.paddingSizeSmall, mainAxisSpacing: Dimensions.paddingSizeSmall,
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              if (ResponsiveHelper.isDesktop(context))
+                const Center(
+                  child: ModuleWidget(),
                 ),
-                itemCount: parcelController.parcelCategoryList!.length,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () => Get.toNamed(RouteHelper.getParcelLocationRoute(parcelController.parcelCategoryList![index])),
-                    child: Container(
-                      padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
-                        borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
-                      ),
-                      child: Row(children: [
-
-                        Container(
-                          height: 55, width: 55, alignment: Alignment.center,
-                          decoration: BoxDecoration(color: Theme.of(context).primaryColor.withOpacity(0.2), shape: BoxShape.circle),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
-                            child: CustomImage(
-                              image: '${Get.find<SplashController>().configModel!.baseUrls!.parcelCategoryImageUrl}'
-                                  '/${parcelController.parcelCategoryList![index].image}',
-                              height: 30, width: 30,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: Dimensions.paddingSizeSmall),
-
-                        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [
-                          Text(parcelController.parcelCategoryList![index].name!, style: robotoMedium),
-                          const SizedBox(height: Dimensions.paddingSizeExtraSmall),
-                          Text(
-                            parcelController.parcelCategoryList![index].description!, maxLines: 2, overflow: TextOverflow.ellipsis,
-                            style: robotoRegular.copyWith(color: Theme.of(context).disabledColor, fontSize: Dimensions.fontSizeSmall),
-                          ),
-                        ])),
-                        const SizedBox(width: Dimensions.paddingSizeSmall),
-
-                        const Icon(Icons.keyboard_arrow_right),
-
-                      ]),
-                    ),
-                  );
-                },
-              ) : Center(child: Text('no_parcel_category_found'.tr)) : ParcelShimmer(isEnabled: parcelController.parcelCategoryList == null),
-
-            ]))),
+              Stack(clipBehavior: Clip.none, children: [
+                SingleChildScrollView(
+                  padding: ResponsiveHelper.isDesktop(context)
+                      ? null
+                      : const EdgeInsets.all(Dimensions.paddingSizeSmall),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: FooterView(
+                        child: SizedBox(
+                            width: Dimensions.webMaxWidth,
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Center(
+                                      child: Image.asset(Images.parcel,
+                                          height: 200)),
+                                  const SizedBox(
+                                      height: Dimensions.paddingSizeSmall),
+                                  Center(
+                                      child: Text('instant_same_day_delivery'.tr,
+                                          style: robotoMedium)),
+                                  Center(
+                                      child: Text(
+                                        'send_things_to_your_destination_instantly_and_safely'
+                                            .tr,
+                                        style: robotoRegular,
+                                        textAlign: TextAlign.center,
+                                      )),
+                                  const SizedBox(
+                                      height: Dimensions.paddingSizeLarge),
+                                  Text('what_are_you_sending'.tr,
+                                      style: robotoBold.copyWith(
+                                          fontSize: Dimensions.fontSizeLarge)),
+                                  const SizedBox(
+                                      height: Dimensions.paddingSizeExtraSmall),
+                                  parcelController.parcelCategoryList != null
+                                      ? parcelController
+                                      .parcelCategoryList!.isNotEmpty
+                                      ? GridView.builder(
+                                    controller: ScrollController(),
+                                    gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount:
+                                      ResponsiveHelper.isDesktop(
+                                          context)
+                                          ? 3
+                                          : ResponsiveHelper.isTab(
+                                          context)
+                                          ? 2
+                                          : 1,
+                                      childAspectRatio:
+                                      ResponsiveHelper.isDesktop(
+                                          context)
+                                          ? (1 / 0.25)
+                                          : (1 / 0.205),
+                                      crossAxisSpacing:
+                                      Dimensions.paddingSizeSmall,
+                                      mainAxisSpacing:
+                                      Dimensions.paddingSizeSmall,
+                                    ),
+                                    itemCount: parcelController
+                                        .parcelCategoryList!.length,
+                                    shrinkWrap: true,
+                                    physics:
+                                    const NeverScrollableScrollPhysics(),
+                                    itemBuilder: (context, index) {
+                                      return InkWell(
+                                        onTap: () => Get.toNamed(RouteHelper
+                                            .getParcelLocationRoute(
+                                            parcelController
+                                                .parcelCategoryList![
+                                            index])),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(
+                                              Dimensions
+                                                  .paddingSizeSmall),
+                                          decoration: BoxDecoration(
+                                            color: Theme.of(context)
+                                                .cardColor,
+                                            borderRadius:
+                                            BorderRadius.circular(
+                                                Dimensions
+                                                    .radiusSmall),
+                                          ),
+                                          child: Row(children: [
+                                            Container(
+                                              height: 55,
+                                              width: 55,
+                                              alignment:
+                                              Alignment.center,
+                                              decoration: BoxDecoration(
+                                                  color: Theme.of(
+                                                      context)
+                                                      .primaryColor
+                                                      .withOpacity(0.2),
+                                                  shape:
+                                                  BoxShape.circle),
+                                              child: ClipRRect(
+                                                borderRadius: BorderRadius
+                                                    .circular(Dimensions
+                                                    .radiusSmall),
+                                                child: CustomImage(
+                                                  image:
+                                                  '${Get.find<SplashController>().configModel!.baseUrls!.parcelCategoryImageUrl}'
+                                                      '/${parcelController.parcelCategoryList![index].image}',
+                                                  height: 30,
+                                                  width: 30,
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                                width: Dimensions
+                                                    .paddingSizeSmall),
+                                            Expanded(
+                                                child: Column(
+                                                    crossAxisAlignment:
+                                                    CrossAxisAlignment
+                                                        .start,
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .center,
+                                                    children: [
+                                                      Text(
+                                                          parcelController
+                                                              .parcelCategoryList![
+                                                          index]
+                                                              .name!,
+                                                          style:
+                                                          robotoMedium),
+                                                      const SizedBox(
+                                                          height: Dimensions
+                                                              .paddingSizeExtraSmall),
+                                                      Text(
+                                                        parcelController
+                                                            .parcelCategoryList![
+                                                        index]
+                                                            .description!,
+                                                        maxLines: 2,
+                                                        overflow:
+                                                        TextOverflow
+                                                            .ellipsis,
+                                                        style: robotoRegular.copyWith(
+                                                            color: Theme.of(
+                                                                context)
+                                                                .disabledColor,
+                                                            fontSize: Dimensions
+                                                                .fontSizeSmall),
+                                                      ),
+                                                    ])),
+                                            const SizedBox(
+                                                width: Dimensions
+                                                    .paddingSizeSmall),
+                                            const Icon(Icons
+                                                .keyboard_arrow_right),
+                                          ]),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                      : Center(
+                                      child: Text(
+                                          'no_parcel_category_found'.tr))
+                                      : ParcelShimmer(
+                                      isEnabled: parcelController
+                                          .parcelCategoryList ==
+                                          null),
+                                ]))),
+                  ),
+                ),
+              ]),
+            ],
           ),
-
-          ResponsiveHelper.isDesktop(context) ? const Positioned(top: 150, right: 0, child: ModuleWidget()) : const SizedBox(),
-
-        ]);
+        );
       }),
     );
   }
@@ -125,15 +231,22 @@ class _ParcelCategoryScreenState extends State<ParcelCategoryScreen> {
 
 class ParcelShimmer extends StatelessWidget {
   final bool isEnabled;
+
   const ParcelShimmer({Key? key, required this.isEnabled}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: ResponsiveHelper.isDesktop(context) ? 3 : ResponsiveHelper.isTab(context) ? 2 : 1,
-        childAspectRatio: (1/(ResponsiveHelper.isMobile(context) ? 0.20 : 0.20)),
-        crossAxisSpacing: Dimensions.paddingSizeSmall, mainAxisSpacing: Dimensions.paddingSizeSmall,
+        crossAxisCount: ResponsiveHelper.isDesktop(context)
+            ? 3
+            : ResponsiveHelper.isTab(context)
+            ? 2
+            : 1,
+        childAspectRatio:
+        (1 / (ResponsiveHelper.isMobile(context) ? 0.20 : 0.20)),
+        crossAxisSpacing: Dimensions.paddingSizeSmall,
+        mainAxisSpacing: Dimensions.paddingSizeSmall,
       ),
       itemCount: 10,
       shrinkWrap: true,
@@ -149,23 +262,26 @@ class ParcelShimmer extends StatelessWidget {
             duration: const Duration(seconds: 2),
             enabled: isEnabled,
             child: Row(children: [
-
               Container(
-                height: 50, width: 50, alignment: Alignment.center,
+                height: 50,
+                width: 50,
+                alignment: Alignment.center,
                 padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                decoration: BoxDecoration(color: Colors.grey[300], shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                    color: Colors.grey[300], shape: BoxShape.circle),
               ),
               const SizedBox(width: Dimensions.paddingSizeSmall),
-
-              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [
-                Container(height: 15, width: 200, color: Colors.grey[300]),
-                const SizedBox(height: Dimensions.paddingSizeExtraSmall),
-                Container(height: 15, width: 100, color: Colors.grey[300]),
-              ])),
+              Expanded(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(height: 15, width: 200, color: Colors.grey[300]),
+                        const SizedBox(height: Dimensions.paddingSizeExtraSmall),
+                        Container(height: 15, width: 100, color: Colors.grey[300]),
+                      ])),
               const SizedBox(width: Dimensions.paddingSizeSmall),
-
               const Icon(Icons.keyboard_arrow_right),
-
             ]),
           ),
         );
@@ -173,4 +289,3 @@ class ParcelShimmer extends StatelessWidget {
     );
   }
 }
-

@@ -28,24 +28,26 @@ import 'package:smart_banner/smart_banner.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'helper/get_di.dart' as di;
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 Future<void> main() async {
-
-  if(ResponsiveHelper.isMobilePhone()) {
+  if (ResponsiveHelper.isMobilePhone()) {
     HttpOverrides.global = MyHttpOverrides();
   }
 
   setPathUrlStrategy();
   WidgetsFlutterBinding.ensureInitialized();
 
-  Stripe.publishableKey ="pk_live_51MaHOCAS4101wa8NBzbO1BPRE86V8jh0VQgACJMSSsTs9vGxDvau5wIBOzfIHBIqygkx3bPx0BCyyZS8iRtIpYEe00Hf3rY9JJ";
+  Stripe.publishableKey =
+      "pk_live_51MaHOCAS4101wa8NBzbO1BPRE86V8jh0VQgACJMSSsTs9vGxDvau5wIBOzfIHBIqygkx3bPx0BCyyZS8iRtIpYEe00Hf3rY9JJ";
   Stripe.merchantIdentifier = 'merchant.flutter.stripe.test';
   Stripe.urlScheme = 'flutterstripe';
   await Stripe.instance.applySettings();
 
-  if(GetPlatform.isWeb){
-    await Firebase.initializeApp(options: const FirebaseOptions(
+  if (GetPlatform.isWeb) {
+    await Firebase.initializeApp(
+        options: const FirebaseOptions(
       apiKey: 'AIzaSyCxJnLEXSwG-fHAzwoEWZdrbxPgOMLkaBE',
       appId: '1:393744073684:web:7c8dcb6fc0cd90fc6a4c41',
       messagingSenderId: 'G-G7GR2SL8MG',
@@ -59,14 +61,15 @@ Future<void> main() async {
   NotificationBody? body;
   try {
     if (GetPlatform.isMobile) {
-      final RemoteMessage? remoteMessage = await FirebaseMessaging.instance.getInitialMessage();
+      final RemoteMessage? remoteMessage =
+          await FirebaseMessaging.instance.getInitialMessage();
       if (remoteMessage != null) {
         body = NotificationHelper.convertNotification(remoteMessage.data);
       }
       await NotificationHelper.initialize(flutterLocalNotificationsPlugin);
       FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
     }
-  }catch(_) {}
+  } catch (_) {}
 
   if (ResponsiveHelper.isWeb()) {
     await FacebookAuth.instance.webAndDesktopInitialize(
@@ -82,16 +85,17 @@ Future<void> main() async {
 class MyApp extends StatefulWidget {
   final Map<String, Map<String, String>>? languages;
   final NotificationBody? body;
-  const MyApp({Key? key, required this.languages, required this.body}) : super(key: key);
+
+  const MyApp({Key? key, required this.languages, required this.body})
+      : super(key: key);
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-
-  CursorTimeoutController cursorTimeoutController = Get.find<CursorTimeoutController>();
-
+  CursorTimeoutController cursorTimeoutController =
+      Get.find<CursorTimeoutController>();
 
   @override
   void initState() {
@@ -101,7 +105,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   bool applePlatformCheck() {
-    if(GetPlatform.isMacOS || GetPlatform.isIOS) {
+    if (GetPlatform.isMacOS || GetPlatform.isIOS) {
       return true;
     } else {
       return false;
@@ -118,9 +122,10 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _route() async {
-    if(GetPlatform.isWeb) {
+    if (GetPlatform.isWeb) {
       await Get.find<SplashController>().initSharedData();
-      if(Get.find<LocationController>().getUserAddress() != null && Get.find<LocationController>().getUserAddress()!.zoneIds == null) {
+      if (Get.find<LocationController>().getUserAddress() != null &&
+          Get.find<LocationController>().getUserAddress()!.zoneIds == null) {
         Get.find<AuthController>().clearSharedAddress();
       }
       Get.find<CartController>().getCartData();
@@ -135,80 +140,101 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ThemeController>(builder: (themeController) {
       return GetBuilder<LocalizationController>(builder: (localizeController) {
         return GetBuilder<SplashController>(builder: (splashController) {
-          return (GetPlatform.isWeb && splashController.configModel == null) ? const SizedBox() :
-            MouseRegion(
-              cursor: SystemMouseCursors.allScroll,
-              onEnter: (PointerEnterEvent event) {
-                cursorTimeoutController.resetTimer();
+          return (GetPlatform.isWeb && splashController.configModel == null)
+              ? const SizedBox()
+              : MouseRegion(
+                  cursor: SystemMouseCursors.basic,
+                  onEnter: (PointerEnterEvent event) {
+                    cursorTimeoutController.resetTimer();
+                  },
+                  onHover: (PointerHoverEvent event) {
+                    cursorTimeoutController.resetTimer();
+                  },
+                  child: GetMaterialApp(
+                    builder: (context, child) {
+                      final isMobileRes = isMobileResponsive(context);
+                      if (child != null && isMobileRes && GetPlatform.isWeb) {
+                        return SmartBannerScaffold(
+                            style: applePlatformCheck()
+                                ? BannerStyle.ios
+                                : BannerStyle.android,
+                            //style: BannerStyle.ios,
+                            key: const ValueKey('scaffold'),
+                            // animationCurve: Curves.easeInCirc,
+                            animationDuration:
+                                const Duration(milliseconds: 600),
+                            isShown: true,
+                            properties: BannerProperties(
+                              title: 'banner_title'.tr,
+                              buttonLabel: 'download'.tr,
+                              appStoreLanguage: 'us',
+                              androidProperties: const BannerPropertiesAndroid(
+                                packageName: 'com.marwa.androiduser',
+                                storeText: 'Marwa.hu',
+                                url:
+                                    'https://play.google.com/store/apps/details?id=com.marwa.androiduser&pcampaignid=web_share',
+                                icon: Image(
+                                  image: AssetImage('assets/image/Marwa.png'),
+                                  width: 60,
+                                  height: 60,
+                                ),
+                              ),
+                              iosProperties: const BannerPropertiesIOS(
+                                appId: '6449415140',
+                                storeText: 'Marwa.hu',
+                                url:
+                                    'https://apps.apple.com/us/app/marwa-foods/id6449415140',
+                                //storeText: 'Marwa.hu',
+                                icon: Image(
+                                  image: AssetImage('assets/image/Marwa.png'),
+                                  width: 60,
+                                  height: 60,
+                                ),
+                              ),
+                            ),
+                            child: child);
+                      }
+                      return child!;
+                    },
+                    title: AppConstants.appName,
+                    debugShowCheckedModeBanner: false,
+                    navigatorKey: Get.key,
+                    scrollBehavior: const MaterialScrollBehavior().copyWith(
+                      scrollbars: true,
+                      physics: const BouncingScrollPhysics(
+                        parent: AlwaysScrollableScrollPhysics(),
+                      ),
+                      dragDevices: {
+                        PointerDeviceKind.mouse,
+                        PointerDeviceKind.touch
+                      },
+                    ),
 
-              },
-              onHover: (PointerHoverEvent event) {
-                cursorTimeoutController.resetTimer();
-              },
-              // onExit: (PointerExitEvent event) {
-              //   print('x: ${event.position.dx}, y: ${event.position.dy}');
-              // },
-              child: GetMaterialApp(
-                builder: (context, child) {
-                  final isMobileRes= isMobileResponsive(context);
-                  if (child != null && isMobileRes && GetPlatform.isWeb) {
-                    return SmartBannerScaffold(
-                        style: applePlatformCheck() ? BannerStyle.ios : BannerStyle.android,
-                        //style: BannerStyle.ios,
-                        key: const ValueKey('scaffold'),
-                        // animationCurve: Curves.easeInCirc,
-                        animationDuration: const Duration(milliseconds: 600),
-                        isShown: true,
-                        properties: BannerProperties(
-                          title: 'banner_title'.tr,
-                          buttonLabel: 'download'.tr,
-                          appStoreLanguage: 'us',
-                          androidProperties: BannerPropertiesAndroid(
-                            packageName: 'com.marwa.androiduser',
-                            storeText: 'Marwa.hu',
-                            url: 'https://play.google.com/store/apps/details?id=com.marwa.androiduser&pcampaignid=web_share',
-                            icon: Image(image: AssetImage('assets/image/Marwa.png'), width: 60, height: 60,),
-                          ),
-                          iosProperties: BannerPropertiesIOS(
-                            appId: '6449415140',
-                            storeText: 'Marwa.hu',
-                            url: 'https://apps.apple.com/us/app/marwa-foods/id6449415140',
-                            //storeText: 'Marwa.hu',
-                            icon: Image(image: AssetImage('assets/image/Marwa.png'), width: 60, height: 60,),
-                          ),
-                        ),
-                        child: child
-                    );
-                  }
-                  return child!;
-                },
-
-                title: AppConstants.appName,
-                debugShowCheckedModeBanner: false,
-                navigatorKey: Get.key,
-                scrollBehavior: const MaterialScrollBehavior().copyWith(
-                  dragDevices: {PointerDeviceKind.mouse, PointerDeviceKind.touch},
-                ),
-                theme: themeController.darkTheme ? themeController.darkColor == null ? dark() : dark(color
-                    : themeController.darkColor!) : themeController.lightColor == null ? light()
-                    : light(color: themeController.lightColor!),
-                locale: localizeController.locale,
-                translations: Messages(languages: widget.languages),
-                fallbackLocale: Locale(AppConstants.languages[0].languageCode!, AppConstants.languages[0].countryCode),
-                initialRoute: GetPlatform.isWeb ? RouteHelper.getInitialRoute() : RouteHelper.getSplashRoute(widget.body),
-                getPages: RouteHelper.routes,
-                defaultTransition: Transition.topLevel,
-                transitionDuration: const Duration(milliseconds: 500),
-              ),
-            );
-
-
+                    theme: themeController.darkTheme
+                        ? themeController.darkColor == null
+                            ? dark()
+                            : dark(color: themeController.darkColor!)
+                        : themeController.lightColor == null
+                            ? light()
+                            : light(color: themeController.lightColor!),
+                    locale: localizeController.locale,
+                    translations: Messages(languages: widget.languages),
+                    fallbackLocale: Locale(
+                        AppConstants.languages[0].languageCode!,
+                        AppConstants.languages[0].countryCode),
+                    initialRoute: GetPlatform.isWeb
+                        ? RouteHelper.getInitialRoute()
+                        : RouteHelper.getSplashRoute(widget.body),
+                    getPages: RouteHelper.routes,
+                    defaultTransition: Transition.topLevel,
+                    transitionDuration: const Duration(milliseconds: 500),
+                  ),
+                );
         });
       });
     });
@@ -218,6 +244,8 @@ class _MyAppState extends State<MyApp> {
 class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }
