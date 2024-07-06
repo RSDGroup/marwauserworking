@@ -1,4 +1,4 @@
-# sixam_mart
+# Marwa - Food and Grocery delivery application 
 
 A new Flutter application.
 
